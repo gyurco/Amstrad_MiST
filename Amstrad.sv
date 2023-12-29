@@ -224,10 +224,17 @@ wire clk_hdmi;
 
 pll pll
 (
+`ifdef USE_CLOCK_50
+	.inclk0(CLOCK_50),
+`else
 	.inclk0(CLOCK_27),
+`endif
 	.c0(clk_sys),
 `ifdef USE_HDMI
 	.c1(clk_hdmi),
+`endif
+`ifdef SDRAM_SHIFTED_CLOCK
+	.c2(SDRAM_CLK),
 `endif
 	.locked(locked)
 );
@@ -546,7 +553,9 @@ wire  [7:0] ram_dout;
 wire [15:0] vram_dout;
 wire [14:0] vram_addr;
 
+`ifndef SDRAM_SHIFTED_CLOCK
 assign SDRAM_CLK = clk_sys;
+`endif
 
 sdram sdram
 (
@@ -1061,7 +1070,7 @@ i2c_master #(64_000_000) i2c_master (
 	.I2C_SDA     (HDMI_SDA)
 );
 
-mist_video #(.COLOR_DEPTH(8), .SD_HCNT_WIDTH(10), .USE_BLANKS(1'b1), .OUT_COLOR_DEPTH(8), .BIG_OSD(BIG_OSD), VIDEO_CLEANER(1'b1)) hdmi_video (
+mist_video #(.COLOR_DEPTH(8), .SD_HCNT_WIDTH(10), .USE_BLANKS(1'b1), .OUT_COLOR_DEPTH(8), .BIG_OSD(BIG_OSD), .VIDEO_CLEANER(1'b1)) hdmi_video (
 	.clk_sys     ( clk_hdmi   ),
 
 	// OSD SPI interface
@@ -1155,15 +1164,22 @@ spdif spdif (
 
 //////////////////////////////////////////////////////////////////////
 
-reg        UART_RXd, UART_RXd2, tape_in;
+wire tape_pin;
+`ifdef USE_AUDIO_IN
+assign tape_pin = AUDIO_IN;
+`else
+assign tape_pin = UART_RX;
+`endif
+
+reg        tape_inD, tape_inD2, tape_in;
 assign     UART_TX = tape_motor;
 
 // detect tape input from UART, switch to external tape input for 5 secs
 // if signal transition detected
 always @(posedge clk_sys) begin
-	UART_RXd <= UART_RX;
-	UART_RXd2 <= UART_RXd;
-	tape_in <= UART_RXd2;
+	tape_inD <= tape_pin;
+	tape_inD2 <= tape_inD;
+	tape_in <= tape_inD2;
 
 	tape_play <= tape_running ? tape_read : tape_in;
 end
