@@ -95,6 +95,12 @@ module Amstrad (
 	output        I2S_LRCK,
 	output        I2S_DATA,
 `endif
+`ifdef I2S_AUDIO_HDMI
+	output        HDMI_MCLK,
+	output        HDMI_BCK,
+	output        HDMI_LRCK,
+	output        HDMI_SDATA,
+`endif
 `ifdef SPDIF_AUDIO
 	output        SPDIF,
 `endif
@@ -179,6 +185,7 @@ localparam CONF_STR = {
 	"P1O2,CRTC,Type 1,Type 0;",
 	"P1O3,Sync signals,Original,Filtered;",
 	"P1OK,Tape sound,Disabled,Enabled;",
+	"P1OR,Invert tape in,Off,On;",
 	"P1OL,Sound output,Stereo,Mono;",
 	"P1OO,Playcity,Disabled,Enabled;",
 	"P2OI,Joysticks swap,No,Yes;",
@@ -213,6 +220,7 @@ wire       st_keypad_mod = status[23];
 wire       st_playcity_ena = status[24];
 wire       st_progressbar = status[25];
 wire       st_symbiface = status[26];
+wire       st_invert_tape = status[27];
 
 //////////////////////////////////////////////////////////////////////////
 
@@ -1152,6 +1160,15 @@ i2s i2s (
 );
 `endif
 
+`ifdef I2S_AUDIO_HDMI
+assign HDMI_MCLK = 0;
+always @(posedge clk_sys) begin
+	HDMI_BCK <= I2S_BCK;
+	HDMI_LRCK <= I2S_LRCK;
+	HDMI_SDATA <= I2S_DATA;
+end
+`endif
+
 `ifdef SPDIF_AUDIO
 spdif spdif (
 	.clk_i(clk_sys),
@@ -1177,7 +1194,7 @@ assign     UART_TX = tape_motor;
 // detect tape input from UART, switch to external tape input for 5 secs
 // if signal transition detected
 always @(posedge clk_sys) begin
-	tape_inD <= tape_pin;
+	tape_inD <= st_invert_tape ^ tape_pin;
 	tape_inD2 <= tape_inD;
 	tape_in <= tape_inD2;
 
