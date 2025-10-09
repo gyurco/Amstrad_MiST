@@ -521,7 +521,7 @@ always @(posedge clk_sys) begin
 	if (old_dan_download & ~dan_download) begin
 		dan_eeprom_loaded <= 1'b1;
     end
-    else if (status[25] == 1'b1) dan_eeprom_loaded <= 1'b0;
+    else if (status[28] == 1'b1) dan_eeprom_loaded <= 1'b0;
 end
 
 // A 8MB bank is split to 2 halves
@@ -611,7 +611,7 @@ reg reset;
 
 always @(posedge clk_sys) begin
 	if(reset) model <= st_cpc664;
-	reset <= status[0] | buttons[1] | rom_download | ext_download | dan_download | status[25] | key_reset;
+	reset <= status[0] | buttons[1] | rom_download | ext_download | dan_download | status[28] | key_reset;
 end
 
 ////////////////////// CDT playback ///////////////////////////////
