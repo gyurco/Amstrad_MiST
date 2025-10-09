@@ -447,6 +447,7 @@ set_global_assignment -name VERILOG_FILE Amstrad_motherboard.v
 set_global_assignment -name SYSTEMVERILOG_FILE Amstrad.sv
 set_global_assignment -name VHDL_FILE tzxplayer.vhd
 set_global_assignment -name VERILOG_FILE symbiface_ii.v
+set_global_assignment -name VHDL_FILE cpc_dandanator.vhd
 set_global_assignment -name VHDL_FILE playcity/playcity.vhd
 set_global_assignment -name QIP_FILE playcity/Z80CTC/z80ctc.qip
 set_global_assignment -name SDC_FILE Amstrad.sdc

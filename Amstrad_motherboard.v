@@ -66,6 +66,7 @@ module Amstrad_motherboard
 	output [22:0] mem_addr,
 	output        mem_rd,
 	output        mem_wr,
+	output        romen,
 
 	// expansion port
 	output        phi_n,
@@ -79,6 +80,7 @@ module Amstrad_motherboard
 	output        rd,
 	output        wr,
 	output        m1,
+	output        ga_ready,
 	input         irq,
 	input         nmi,
 	output        cursor
@@ -99,6 +101,8 @@ assign iorq = ~IORQ_n;
 assign mreq = ~MREQ_n;
 assign rd = ~RD_n;
 assign wr = ~WR_n;
+assign romen = ~romen_n;
+assign ga_ready = ready;
 
 wire [15:0] A;
 wire  [7:0] D;
