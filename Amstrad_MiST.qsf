@@ -320,6 +320,7 @@ set_global_assignment -name VHDL_FILE YM2149.vhd
 set_global_assignment -name VHDL_FILE vol_table_array.vhd
 set_global_assignment -name VERILOG_FILE Amstrad_MMU.v
 set_global_assignment -name VERILOG_FILE Amstrad_motherboard.v
+set_global_assignment -name VHDL_FILE cpc_dandanator.vhd
 set_global_assignment -name SYSTEMVERILOG_FILE Amstrad.sv
 set_global_assignment -name VHDL_FILE tzxplayer.vhd
 set_global_assignment -name VERILOG_FILE symbiface_ii.v
